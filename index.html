@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>css-signals</title>
+  </head>
+  <body>
+    <div id=storeEl style="--count: 0">
+      <p>Count: <span id=readEl>0</span></p>
+      <button id=writeEl>+</button>
+    </div>
+
+    <script type="module">
+      function createStore(name, el = document.body) {
+        return [
+          () => el.style.getPropertyValue(name),
+          (v) => {
+            el.style.setProperty(name, v);
+            el.dispatchEvent(new Event(name));
+          }
+        ];
+      }
+      
+      const [count, setCount] = createStore('--count', storeEl);
+      
+      writeEl.onclick = () => setCount(+count() + 1);
+      storeEl.addEventListener('--count', () => {
+        readEl.textContent = count();
+      });
+    </script>
+  </body>
+</html>
